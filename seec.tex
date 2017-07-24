@@ -1,0 +1,402 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% a0poster Portrait Poster
+% LaTeX Template
+% Version 1.0 (22/06/13)
+%
+% The a0poster class was created by:
+% Gerlinde Kettl and Matthias Weiser (tex@kettl.de)
+% 
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[a0,portrait]{a0poster}
+
+% increase some sizes
+\renewcommand{\footnotesize}{\fontsize{20.74}{25}\selectfont}
+\renewcommand{\small}{\fontsize{24.88}{30}\selectfont}
+\renewcommand{\normalsize}{\fontsize{29.86}{37}\selectfont}
+
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{multicol} % This is so we can have multiple columns of text side-by-side
+\columnsep=100pt % This is the amount of white space between the columns in the poster
+\columnseprule=1pt % This is the thickness of the black line between the columns in the poster
+
+\usepackage[svgnames]{xcolor} % Specify colors by their 'svgnames', for a full list of all colors available see here: http://www.latextemplates.com/svgnames-colors
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+% options for pgfplots
+\pgfplotsset{compat=1.8,compat/show suggested version=false}
+\usetikzlibrary{calc,trees,arrows,patterns,plotmarks,shapes,snakes,er,3d,automata,backgrounds,topaths,decorations.pathmorphing,decorations.markings}
+%\pgfplotsset{compat=newest}
+\pgfplotsset{
+   /pgfplots/bar  cycle  list/.style={/pgfplots/cycle  list={%
+        {black,fill=black!30!white,mark=none},%
+        {black,fill=red!30!white,mark=none},%
+        {black,fill=green!30!white,mark=none},%
+        {black,fill=yellow!30!white,mark=none},%
+        {black,fill=brown!30!white,mark=none},%
+     }
+   },
+}
+% begin of externalization
+\usetikzlibrary{external}
+\tikzexternalize[prefix=out/]
+\tikzexternalize
+% don't externalize todonotes
+%\makeatletter
+%\renewcommand{\todo}[2][]{\tikzexternaldisable\@todo[#1]{#2}\tikzexternalenable}
+%\makeatother
+% end of externalization
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{
+every axis label/.append style={font=\normalsize},
+tick label style={font=\small},
+}
+\usepackage{times} % Use the times font
+%\usepackage{palatino} % Uncomment to use the Palatino font
+
+\usepackage{graphicx} % Required for including images
+%\graphicspath{{figures/}} % Location of the graphics files
+\usepackage{booktabs} % Top and bottom rules for table
+\usepackage[font=normalsize,labelfont=bf]{caption} % Required for specifying captions to tables and figures
+\usepackage{amsfonts, amsmath, amsthm, amssymb} % For math fonts, symbols and environments
+\usepackage{wrapfig} % Allows wrapping text around tables and figures
+\usepackage{subcaption}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\usepackage{listings}
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\ttfamily, % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=leftline,                  % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=10pt,                   % how far the line-numbers are from the code
+  numberstyle=\small\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{black},     % string literal style
+  tabsize=1,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+% some useful shortcuts
+\newcommand{\ie}{\textit{i.e., }}
+\newcommand{\eg}{\textit{e.g., }}
+\newcommand{\etal}{et al.\ }
+\newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.5ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.5ex}{\tiny\bf +}}
+
+% units for results
+\newcommand{\uj}{\,$\mu$J}
+\newcommand{\mw}{\,mW}
+\newcommand{\uw}{\,$\mu$W}
+\newcommand{\ns}{\,ns}
+\newcommand{\us}{\,$\mu$s}
+\newcommand{\ms}{\,ms}
+\newcommand{\KB}{\,KB}
+\newcommand{\MB}{\,MB}
+\newcommand{\GB}{\,GB}
+\newcommand{\MHz}{\,MHz}
+\newcommand{\GHz}{\,GHz}
+
+% \newcommand{\SYSTEM}{Bard}
+% \newcommand{\system}{bard}
+% new latex commands:
+%   Remove long section
+\newcommand{\PUNT}[1]{}
+
+%   Referencing various pieces of the document:
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\figsref}[2]{Figures~\ref{fig:#1} and~\ref{fig:#2}}
+\newcommand{\figrref}[2]{Figures~\ref{fig:#1}--\ref{fig:#2}}
+\newcommand{\secref}[1]{Section~\ref{sec:#1}}
+\newcommand{\secsref}[2]{Sections~\ref{sec:#1} and~\ref{sec:#2}}
+\newcommand{\eqnref}[1]{Eqn.~\ref{eqn:#1}}
+\newcommand{\eqnsref}[2]{Eqns.~\ref{eqn:#1} and~\ref{eqn:#2}}
+\newcommand{\eqnrref}[2]{Eqns.~\ref{eqn:#1}--\ref{eqn:#2}}
+\newcommand{\insref}[1]{Instruction~\ref{ins:#1}}
+\newcommand{\tblref}[1]{Table~\ref{tbl:#1}}
+\newcommand{\appref}[1]{Appendix~\ref{app:#1}}
+\newcommand{\algoref}[1]{Algorithm~\ref{algo:#1}}
+
+\newcommand{\argmin}{\arg\!\min}
+\newcommand{\argmax}{\arg\!\max}
+\newcommand{\minimize}{minimize}
+\newcommand{\optimize}{optimize}
+\newcommand{\st}{s.t.}
+
+\newcommand{\app}[1]{\mbox{\texttt{#1}}}
+\newcommand{\interface}[1]{\textbf{#1}}
+\newcommand{\function}[1]{\mbox{\texttt{#1}}}
+\newcommand{\struct}[1]{\emph{#1}}
+\newcommand{\variable}[1]{\emph{#1}}
+
+\newcommand{\PAD}{\vskip 0.75cm}
+
+\usepackage[natbib=true,backend=bibtex,firstinits=true,style=numeric-comp,sorting=nyt,defernumbers,maxnames=2,maxcitenames=2,doi=false,isbn=false,url=false]{biblatex}
+\bibliography{seec}
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	POSTER HEADER 
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}[b]{\linewidth}
+\begin{center}
+\includegraphics[height=5cm]{figures/uchicago_logo.png} %[width=20cm]
+\hspace{42cm}
+\includegraphics[height=5cm]{figures/lbnl_logo.png}\\
+\vspace{0.5cm}
+\noindent\makebox[\linewidth]{\rule{0.9\paperwidth}{0.4pt}}
+\vspace{0.5cm}
+\end{center}
+
+\Huge \color{NavyBlue} \textbf{Energy Efficiency in HPC with Machine Learning and Control Theory} \color{Black}\\[0.5cm] % Title
+% \veryHuge \color{NavyBlue} \textbf{Bard} \color{Black}\\[0.5cm] % Title
+% \Huge\textit{A Unified Framework for Managing Soft Timing and Power Constraints}\\[1.5cm] % Subtitle
+%\begin{center}
+\huge \textbf{Connor Imes, Steven Hofmeyr$^{*}$, and Henry Hoffmann}\\[0.25cm] % Author(s)
+\Large \textbf{ckimes@cs.uchicago.edu, shofmeyr@lbl.gov, hankhoffmann@cs.uchicago.edu}
+% \\
+% \Large \textbf{University of Chicago, Lawrence Berkeley National Laboratory*} % University/organization
+%\end{center}
+\end{minipage}
+%
+
+%\vspace{1cm} % A bit of extra whitespace between the header and poster content
+
+%----------------------------------------------------------------------------------------
+
+\begin{multicols}{2} % This is how many columns your poster will be broken into, a portrait poster is generally split into 2 columns
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\color{Navy} % Navy color for the abstract
+
+\begin{abstract}
+
+High Performance Computing (HPC) systems tend to favor a race-to-idle approach to complete applications as quickly as possible.
+Historically, this approach has resulted in reasonably energy-efficient systems, however modern systems are more energy-proportional.
+As we move toward exascale and hardware over-provisioning, power management is becoming more critical than ever for HPC system administrators, opening the door for more balanced approaches to performance and power management.
+We propose two projects to address balancing application performance and system power consumption in HPC \emph{during application runtime}.
+
+
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	INTRODUCTION
+%----------------------------------------------------------------------------------------
+
+%\color{SaddleBrown} % SaddleBrown color for the introduction
+
+%\section*{Introduction}
+
+%----------------------------------------------------------------------------------------
+%	OBJECTIVES
+%----------------------------------------------------------------------------------------
+
+\color{DarkSlateGray} % DarkSlateGray color for the rest of the content
+
+% \vspace{-1cm}
+% \section*{Motivation}
+
+
+
+%----------------------------------------------------------------------------------------
+%	MATERIALS AND METHODS
+%----------------------------------------------------------------------------------------
+
+\vspace{-1cm}
+\section*{Machine Learning Classification for Energy Efficiency}
+
+\textbf{Dynamic voltage and frequency scaling} (DVFS) has been available on computing systems for roughly two decades now.
+Despite the HPC preference for race-to-idle, DVFS is available in HPC job schedulers to allow applications to save energy by scaling back the processor during I/O or on code that is off the critical path.
+
+We propose to use a machine learning-based classifier to predict the most energy-efficient DVFS settings at runtime to maximize the work-to-cost ratio of an application running on a single node.
+This approach allows us to maximize the work-to-cost ratio of an application running on a single node.
+To train and drive our classifier, we capture low-level hardware counter metrics, available through tools like PAPI or PCM.
+Then at regular time intervals, our classifier predicts the most energy-efficient state to use based on measured application behavior and applies the setting to the system.
+
+{
+\PAD
+\centering
+  \input{img/scheme-ee.tex}
+  \captionof{figure}{\interface{Machine Learning Classifier} closed loop feedback control design.}
+  \label{fig:runtime-ee}
+\PAD
+}
+
+As applications move through \emph{phases}, the controller adapts to the changing application and system behavior.
+For example, we test a parallel video encoder:
+
+{
+\PAD
+\centering
+  \input{img/x264-phases-ee.tex}    
+  \captionof{figure}{Energy-efficient video encoding (Support Vector Machine classifier).}
+  \label{fig:classifier-phases-x264-ee}
+\PAD
+}
+
+\vfill\null
+\columnbreak
+
+%------------------------------------------------
+
+%\subsection*{Mathematical Section}
+
+
+
+%----------------------------------------------------------------------------------------
+% RESULTS 
+%----------------------------------------------------------------------------------------
+
+\vspace{-1cm}
+\section*{MIMO Controller for Power Balancing}
+
+In more recent years, hardware has taken more direct control of voltage and frequency, making fine-tuned software-management of DVFS obsolete.
+Fine-grained \textbf{power capping} is now the preferred mechanism for managing performance and power tradeoffs, evidenced by the introduction of power capping implementations like Intel Running Average Power Limit (RAPL) and the move from Speed Step to Speed Shift.
+
+Nodes in HPC clusters suffer \emph{non-uniformity} in performance and power consumption due to both manufacturing process variation and imbalance in application workloads.
+We propose a generalized multiple input, multiple output (MIMO) controller to shift power allocations between nodes to eliminate tail idle times in job iterations, thus maximizing application throughput while respecting a global power cap.
+
+{
+\PAD
+\centering
+  \input{img/scheme-nlpb.tex}
+  \captionof{figure}{\interface{MIMO} proportional integral derivative (PID) closed loop controller.}
+  \label{fig:runtime-nlpb}
+\PAD
+}
+
+Given cluster power cap $\Gamma$, the PID \textbf{controller} computes new power signals $U$ in each iteration $t$:
+\begin{eqnarray}
+U(t) = U(t-1) + K_I \cdot E(t)
+\end{eqnarray}
+where $K_I$ is the ratio of control change and $E(t)$ are node idle times, normalized around their mean.
+This formulation ensures that the entire global power cap is re-allocated in each iteration.
+Formally:
+\begin{eqnarray}
+\sum_{i=1}^{n} e_i(t) = 0 \implies \sum_{i=1}^{n} u_i(t) = \sum_{i=1}^{n} u_i(t-1) = \Gamma
+\end{eqnarray}
+$K_I$ is currently a fixed scalar value decided at initialization time, but we are exploring ways to predict it dynamically at runtime, \eg using a Kalman filter.
+
+Unlike heuristic approaches to power management, control theory provides formal \emph{convergence guarantees} and is \emph{robust} to application, system, and measurement noise.
+We simulate meeting a global power cap of 180 Watts on a quad-socket system using a MPI+OpenMP application, with each MPI process bound to a socket:
+
+% \begin{minipage}{\columnwidth}
+% \PAD
+% \centering
+% \begin{tabular}{|c|c|c|c|c|c|}
+% \hline
+% \textbf{} & \textbf{Iteration 0} & \textbf{Iteration 1} & \textbf{Iteration 2} & \textbf{Iteration 3} & \textbf{Iteration 4} \\
+% \hline
+% \textbf{Node 0} & 100 & 105 & 105 & 106 & 103 \\
+% \textbf{Node 1} & 100 & 97  & 96  & 97  & ... \\
+% \textbf{Node 2} & 100 & 96  & 98  & 97  & ... \\
+% \textbf{Node 4} & 100 & 102 & 101 & 100 & ... \\
+% \hline
+% \textbf{Sum}    & 400 W & 400 W & 400 W & 400 W & 400 W \\
+% \hline
+% \end{tabular}
+% \captionof{table}{Example of balancing 1 400 Watt power cap between 4 nodes.}
+% \label{tbl:nlpb-example}
+% \PAD
+% \end{minipage}
+
+{
+% NLPB_K=2.5 ./nlpb-simulator -n 4 -g 180 -p 40 -P 70 -c /local/nlpb-scripts/boggle/omp-only-balanced-3ghz-rapl.results -i boggle_imbalance.txt -N 10 -l nlpb.log
+% boggle_imbalance:.txt
+% 0.8
+% 0.92
+% 1.10
+% 1.18
+\PAD
+\centering
+  \input{img/nlpb.tex}    
+  \captionof{figure}{Simulation of changing node power caps between iterations.}
+  \label{fig:nlpb-sim}
+\PAD
+}
+
+
+%----------------------------------------------------------------------------------------
+%	CONCLUSIONS
+%----------------------------------------------------------------------------------------
+\color{SaddleBrown} % SaddleBrown color for the conclusions to make them stand out
+
+% \section*{Conclusions}
+
+
+
+\color{DarkSlateGray} % Set the color back to DarkSlateGray for the rest of the content
+
+%----------------------------------------------------------------------------------------
+%	FORTHCOMING RESEARCH
+%----------------------------------------------------------------------------------------
+
+%\section*{Forthcoming Research}
+
+
+
+ %----------------------------------------------------------------------------------------
+%	REFERENCES
+%----------------------------------------------------------------------------------------
+
+% \printbibliography
+%\nocite{*} % Print all references regardless of whether they were cited in the poster or not
+%\bibliographystyle{plain} % Plain referencing style
+%\bibliography{seec}
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\PUNT{
+\section*{Acknowledgements}
+
+\footnotesize
+The effort on this project is funded by the U.S. Government under the DARPA BRASS program, by the Dept. of Energy under DOE DE-AC02-06CH11357, by the NSF under CCF 1439156, and by a DOE Early Career Award.
+}
+
+%----------------------------------------------------------------------------------------
+
+\end{multicols}
+
+% \begin{minipage}[b]{\linewidth}
+\begin{center}
+\vspace{0.5cm}
+\Large \texttt{https://people.cs.uchicago.edu/{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}ckimes/}
+% \Large \texttt{http://poet.cs.uchicago.edu/}~~~~~~$\vert$~~~~~~\texttt{http://github.com/energymon/}~~~~~~$\vert$~~~~~~\texttt{http://github.com/powercap/}
+\end{center}
+% \end{minipage}
+
+\end{document}

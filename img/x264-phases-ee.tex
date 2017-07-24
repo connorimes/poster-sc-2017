@@ -1,0 +1,73 @@
+\begin{tikzpicture}
+\begin{centering}
+
+\definecolor{s1}{RGB}{228, 26, 28}
+\definecolor{s2}{RGB}{55, 126, 184}
+\definecolor{s3}{RGB}{77, 175, 74}
+\definecolor{s4}{RGB}{152, 78, 163}
+\definecolor{s5}{RGB}{255, 127, 0}
+
+\begin{groupplot}[
+    group style={
+        group name=plots,
+        group size=1 by 2,
+        xlabels at=edge bottom,
+        xticklabels at=edge bottom,
+        vertical sep=10pt
+    },
+height=8cm,
+width=0.8\columnwidth,
+xmajorgrids,
+ymajorgrids,
+grid style={dashed},
+xmin=0,
+xmax=60,
+yticklabel pos=left,
+enlargelimits=false,
+tick align = outside,
+tick style={white},
+xticklabel shift={-5pt},
+yticklabel shift={-5pt},
+ylabel shift={-2pt},
+ylabel style={align=center},
+unbounded coords=jump,
+]
+
+\nextgroupplot[ylabel={DVFS \\ Frequency \\ (Normalized)}, % Performance
+xtick={0,5,10,15,20,25,30,35,40,45,50,55,60},
+ytick={0.0,0.2,0.4,0.6,0.8,1.0},
+yticklabels={0.0,0.2,0.4,0.6,0.8,1.0},
+% yticklabel style={font=\footnotesize},
+ymin=0.5,
+ymax=1.1,
+% legend entries={{\footnotesize $\mathsf{Server}$}},
+% legend style={draw=none,at={(0.5,1.4)},anchor=north,legend columns=4,line width=5pt},
+]
+\addplot[ultra thick, solid, color=s2] table[x index=0,y index=1,col sep=tab] {img/x264-phases-ee.txt};
+\addplot[thick, solid, black] coordinates {(0, 1) (60, 1)};
+% \addplot[thick, dashed, black] coordinates {(1500,0) (1500, 2)};
+% \addplot[thick, dashed, black] coordinates {(3000,0) (3000, 2)};
+
+
+\nextgroupplot[ylabel={Energy \\ Efficiency \\ (Normalized)}, % Power
+ytick={0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4},
+yticklabels={0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4},
+% yticklabel style={font=\footnotesize},
+ymin=0,
+ymax=1.4,
+xlabel={$time$ [seconds]},
+xlabel near ticks,
+xtick={0,5,10,15,20,25,30,35,40,45,50,55,60},
+xticklabels={0,,10,,20,,30,,40,,50,,60},
+% xticklabel style={font=\footnotesize},
+]
+\addplot[ultra thick, solid, color=s1] table[x index=0,y index=2,col sep=tab] {img/x264-phases-ee.txt};
+\addplot[thick, solid, black] coordinates {(0, 1) (60, 1)}; % race
+% \addplot[thick, solid, black] coordinates {(0, 0.773) (60, 0.773)}; % worst-case
+% \addplot[thick, dashed, black] coordinates {(1500,0) (1500, 250)};
+% \addplot[thick, dashed, black] coordinates {(3000,0) (3000, 250)};
+
+\end{groupplot}
+\end{centering}
+
+\end{tikzpicture}
