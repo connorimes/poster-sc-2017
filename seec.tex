@@ -161,6 +161,9 @@ tick label style={font=\small},
 \usepackage[natbib=true,backend=bibtex,firstinits=true,style=numeric-comp,sorting=nyt,defernumbers,maxnames=2,maxcitenames=2,doi=false,isbn=false,url=false]{biblatex}
 \bibliography{seec}
 
+% Use bold for vectors instead of arrows
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
 \begin{document}
 
 %----------------------------------------------------------------------------------------
@@ -182,7 +185,7 @@ tick label style={font=\small},
 % \Huge\textit{A Unified Framework for Managing Soft Timing and Power Constraints}\\[1.5cm] % Subtitle
 %\begin{center}
 \huge \textbf{Connor Imes, Steven Hofmeyr$^{*}$, and Henry Hoffmann}\\[0.25cm] % Author(s)
-\Large \textbf{ckimes@cs.uchicago.edu, shofmeyr@lbl.gov, hankhoffmann@cs.uchicago.edu}
+\LARGE \textbf{ckimes@cs.uchicago.edu, shofmeyr@lbl.gov, hankhoffmann@cs.uchicago.edu}
 % \\
 % \Large \textbf{University of Chicago, Lawrence Berkeley National Laboratory*} % University/organization
 %\end{center}
@@ -203,11 +206,20 @@ tick label style={font=\small},
 
 \begin{abstract}
 
-High Performance Computing (HPC) systems tend to favor a race-to-idle approach to complete applications as quickly as possible.
-Historically, this approach has resulted in reasonably energy-efficient systems, however modern systems are more energy-proportional.
+\normalsize
+Performance/power management in High Performance Computing (HPC) has historically favored a race-to-idle approach in order to complete applications as quickly as possible, often wasting a significant amount of energy.
+% This approach has been reasonably energy-efficient in the past, however modern systems are more energy-proportional.
 As we move toward exascale and hardware over-provisioning, power management is becoming more critical than ever for HPC system administrators, opening the door for more balanced approaches to performance and power management.
-We propose two projects to address balancing application performance and system power consumption in HPC \emph{during application runtime}.
+We propose two projects to address balancing application performance and system power consumption in HPC \emph{during application runtime}, using closed loop feedback designs based on the Self-aware Computing Model.
 
+{
+\PAD
+\centering
+  \includegraphics[width=0.8\columnwidth]{figures/seec.png}
+  \captionof{figure}{The Self-aware Computing Model.}
+  \label{fig:runtime-ee}
+\PAD
+}
 
 \end{abstract}
 
@@ -229,7 +241,6 @@ We propose two projects to address balancing application performance and system 
 % \section*{Motivation}
 
 
-
 %----------------------------------------------------------------------------------------
 %	MATERIALS AND METHODS
 %----------------------------------------------------------------------------------------
@@ -237,13 +248,11 @@ We propose two projects to address balancing application performance and system 
 \vspace{-1cm}
 \section*{Machine Learning Classification for Energy Efficiency}
 
-\textbf{Dynamic voltage and frequency scaling} (DVFS) has been available on computing systems for roughly two decades now.
-Despite the HPC preference for race-to-idle, DVFS is available in HPC job schedulers to allow applications to save energy by scaling back the processor during I/O or on code that is off the critical path.
+\textbf{Dynamic voltage and frequency scaling (DVFS)} is effective at saving energy by scaling back the processor during I/O or on code that is off the critical path.
+DVFS is available in HPC job schedulers, though unfortunately today it is typically only configurable when a job is launched.
 
-We propose to use a machine learning-based classifier to predict the most energy-efficient DVFS settings at runtime to maximize the work-to-cost ratio of an application running on a single node.
-This approach allows us to maximize the work-to-cost ratio of an application running on a single node.
-To train and drive our classifier, we capture low-level hardware counter metrics, available through tools like PAPI or PCM.
-Then at regular time intervals, our classifier predicts the most energy-efficient state to use based on measured application behavior and applies the setting to the system.
+We propose a \interface{Machine Learning-based classifier} to predict the most energy-efficient DVFS frequencies \emph{during runtime} to maximize the work-to-cost ratio of an application running on a single node.
+To train and drive our classifier, we capture low-level \emph{hardware counter metrics}, available through tools like \app{PAPI} and \app{PCM}.
 
 {
 \PAD
@@ -254,6 +263,8 @@ Then at regular time intervals, our classifier predicts the most energy-efficien
 \PAD
 }
 
+At regular time intervals, the classifier predicts the most energy-efficient frequency to use based on measured application behavior, then applies the setting to the system.
+% At regular time intervals, \eg every second, the classifier makes a new prediction.
 As applications move through \emph{phases}, the controller adapts to the changing application and system behavior.
 For example, we test a parallel video encoder:
 
@@ -282,26 +293,28 @@ For example, we test a parallel video encoder:
 \vspace{-1cm}
 \section*{MIMO Controller for Power Balancing}
 
-In more recent years, hardware has taken more direct control of voltage and frequency, making fine-tuned software-management of DVFS obsolete.
-Fine-grained \textbf{power capping} is now the preferred mechanism for managing performance and power tradeoffs, evidenced by the introduction of power capping implementations like Intel Running Average Power Limit (RAPL) and the move from Speed Step to Speed Shift.
+In recent years, hardware is taking more direct control of processor voltage and frequency, making fine-tuned software-management of DVFS obsolete.
+Fine-grained \interface{power capping} is now the preferred mechanism for managing performance and power tradeoffs, evidenced by the introduction of power capping implementations like Intel \interface{Running Average Power Limit (RAPL)} and the move from Speed Step to Speed Shift.
 
 Nodes in HPC clusters suffer \emph{non-uniformity} in performance and power consumption due to both manufacturing process variation and imbalance in application workloads.
-We propose a generalized multiple input, multiple output (MIMO) controller to shift power allocations between nodes to eliminate tail idle times in job iterations, thus maximizing application throughput while respecting a global power cap.
+We propose a generalized \interface{Multiple Input, Multiple Output (MIMO) Proportional Integral Derivative (PID) controller} to shift power allocations between nodes to eliminate tail idle times in job iterations, thus maximizing application throughput while respecting a global power cap.
+Unlike heuristic approaches to power management, \textbf{control theory} provides \emph{formal guarantees} of \emph{convergence} as well as \emph{robustness} to application, system, and measurement noise.
+These guarantees hold even for applications with different \emph{phases}.
 
 {
 \PAD
 \centering
   \input{img/scheme-nlpb.tex}
-  \captionof{figure}{\interface{MIMO} proportional integral derivative (PID) closed loop controller.}
+  \captionof{figure}{\interface{MIMO PID controller} closed loop feedback control design.}
   \label{fig:runtime-nlpb}
 \PAD
 }
 
-Given cluster power cap $\Gamma$, the PID \textbf{controller} computes new power signals $U$ in each iteration $t$:
+Given cluster with $n$ nodes and global power cap $\Gamma$, the PID controller computes a new power signal vector $\vec{u}$ of size $n$ in each iteration $t$:
 \begin{eqnarray}
-U(t) = U(t-1) + K_I \cdot E(t)
+\vec{u}(t) = \vec{u}(t-1) + K_I \cdot \vec{e}(t)
 \end{eqnarray}
-where $K_I$ is the ratio of control change and $E(t)$ are node idle times, normalized around their mean.
+$K_I$ is the ratio of control change and $\vec{e}(t)$ are the node idle times, divided by their mean and normalized around $0$.
 This formulation ensures that the entire global power cap is re-allocated in each iteration.
 Formally:
 \begin{eqnarray}
@@ -309,8 +322,9 @@ Formally:
 \end{eqnarray}
 $K_I$ is currently a fixed scalar value decided at initialization time, but we are exploring ways to predict it dynamically at runtime, \eg using a Kalman filter.
 
-Unlike heuristic approaches to power management, control theory provides formal \emph{convergence guarantees} and is \emph{robust} to application, system, and measurement noise.
-We simulate meeting a global power cap of 180 Watts on a quad-socket system using a MPI+OpenMP application, with each MPI process bound to a socket:
+We simulate meeting a global power cap of 180 Watts on a quad-socket system ($\Gamma=180$, $n=4$) using a MPI+OpenMP application, with each MPI process bound to a socket.
+We begin with evenly distributed power caps, \ie $u_i(0) = \frac{\Gamma}{n}$ for each node $i$.
+We then run 10 time steps:
 
 % \begin{minipage}{\columnwidth}
 % \PAD
@@ -347,6 +361,15 @@ We simulate meeting a global power cap of 180 Watts on a quad-socket system usin
 \PAD
 }
 
+The controller quickly rebalances power caps so that nodes finish their jobs with near-zero tail idle times.
+
+Some outstanding issues remain to be addressed:
+\begin{itemize}
+\item Handling node-level minimum and maximum power bounds.
+\item Estimating $K_I$ at runtime.
+\item Properly and accurately measuring tail idle times in MPI processes.
+\item Gaining access to a cluster that supports runtime power cap adjustments.
+\end{itemize}
 
 %----------------------------------------------------------------------------------------
 %	CONCLUSIONS
