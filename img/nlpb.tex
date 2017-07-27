@@ -48,13 +48,10 @@ ymax=14,
 legend entries={{$\mathsf{Process~0}$},{$\mathsf{Process~1}$},{$\mathsf{Process~2}$},{$\mathsf{Process~3}$}},
 legend style={draw=none,at={(0.5,1.25)},anchor=north,legend columns=4,line width=5pt},
 ]
-\addplot[ultra thick, solid, color=s1] table[x index=0,y index=10,col sep=space] {img/nlpb.log};
-\addplot[ultra thick, solid, color=s2] table[x index=0,y index=13,col sep=space] {img/nlpb.log};
-\addplot[ultra thick, solid, color=s3] table[x index=0,y index=16,col sep=space] {img/nlpb.log};
-\addplot[ultra thick, solid, color=s4] table[x index=0,y index=19,col sep=space] {img/nlpb.log};
-\addplot[thick, solid, black] coordinates {(0, 45) (10, 45)};
-% \addplot[ultra thick, dashed, black] coordinates {(1500,0) (1500, 2)};
-% \addplot[ultra thick, dashed, black] coordinates {(3000,0) (3000, 2)};
+\addplot[ultra thick, solid, color=s1] table[x index=0,y index=10,col sep=space, skip first n={2}] {img/nlpb.log};
+\addplot[ultra thick, solid, color=s2] table[x index=0,y index=13,col sep=space, skip first n={2}] {img/nlpb.log};
+\addplot[ultra thick, solid, color=s3] table[x index=0,y index=16,col sep=space, skip first n={2}] {img/nlpb.log};
+\addplot[ultra thick, solid, color=s4] table[x index=0,y index=19,col sep=space, skip first n={2}] {img/nlpb.log};
 
 \nextgroupplot[ylabel={Power Cap (W)}, % Performance
 xlabel={$time$ [iteration]},

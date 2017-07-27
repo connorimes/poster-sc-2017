@@ -207,10 +207,9 @@ tick label style={font=\small},
 \begin{abstract}
 
 \normalsize
-Performance/power management in High Performance Computing (HPC) has historically favored a race-to-idle approach in order to complete applications as quickly as possible, often wasting a significant amount of energy.
-% This approach has been reasonably energy-efficient in the past, however modern systems are more energy-proportional.
+Performance and power management in High Performance Computing (HPC) has historically favored a race-to-idle approach in order to complete applications as quickly as possible, often wasting a significant amount of energy.
 As we move toward exascale and hardware over-provisioning, power management is becoming more critical than ever for HPC system administrators, opening the door for more balanced approaches to performance and power management.
-We propose two projects to address balancing application performance and system power consumption in HPC \emph{during application runtime}, using closed loop feedback designs based on the Self-aware Computing Model.
+We propose two projects to address balancing application performance and system power consumption in HPC \emph{during application runtime}, using closed loop feedback designs based on the Self-aware Computing Model to \emph{observe}, \emph{act}, and \emph{decide}.
 
 {
 \PAD
@@ -277,8 +276,8 @@ For example, we test a parallel video encoder:
 \PAD
 }
 
-\vfill\null
-\columnbreak
+% \vfill\null
+% \columnbreak
 
 %------------------------------------------------
 
@@ -293,8 +292,8 @@ For example, we test a parallel video encoder:
 \vspace{-1cm}
 \section*{MIMO Controller for Power Balancing}
 
-In recent years, hardware is taking more direct control of processor voltage and frequency, making fine-tuned software-management of DVFS obsolete.
-Fine-grained \interface{power capping} is now the preferred mechanism for managing performance and power tradeoffs, evidenced by the introduction of power capping implementations like Intel \interface{Running Average Power Limit (RAPL)} and the move from Speed Step to Speed Shift.
+In recent years, hardware has been taking more direct control of processor voltage and frequency, making fine-tuned software-management of DVFS obsolete.
+Fine-grained \interface{power capping} is now the preferred mechanism for managing performance and power tradeoffs, evidenced by the introduction of power capping implementations like \interface{Intel Running Average Power Limit (RAPL)} and the move from Speed Step to Speed Shift.
 
 Nodes in HPC clusters suffer \emph{non-uniformity} in performance and power consumption due to both manufacturing process variation and imbalance in application workloads.
 We propose a generalized \interface{Multiple Input, Multiple Output (MIMO) Proportional Integral Derivative (PID) controller} to shift power allocations between nodes to eliminate tail idle times in job iterations, thus maximizing application throughput while respecting a global power cap.
@@ -310,7 +309,7 @@ These guarantees hold even for applications with different \emph{phases}.
 \PAD
 }
 
-Given cluster with $n$ nodes and global power cap $\Gamma$, the PID controller computes a new power signal vector $\vec{u}$ of size $n$ in each iteration $t$:
+Given a cluster with $n$ nodes and global power cap $\Gamma$, the PID controller computes a new power signal vector $\vec{u}$ of size $n$ in each iteration $t$:
 \begin{eqnarray}
 \vec{u}(t) = \vec{u}(t-1) + K_I \cdot \vec{e}(t)
 \end{eqnarray}
@@ -322,8 +321,8 @@ Formally:
 \end{eqnarray}
 $K_I$ is currently a fixed scalar value decided at initialization time, but we are exploring ways to predict it dynamically at runtime, \eg using a Kalman filter.
 
-We simulate meeting a global power cap of 180 Watts on a quad-socket system ($\Gamma=180$, $n=4$) using a MPI+OpenMP application, with each MPI process bound to a socket.
-We begin with evenly distributed power caps, \ie $u_i(0) = \frac{\Gamma}{n}$ for each node $i$.
+We simulate meeting a global power cap of 180 Watts on an artificially imbalanced quad-socket system ($\Gamma=180$, $n=4$) using a MPI+OpenMP application, with each MPI process bound to a socket.
+We begin with evenly distributed power caps, \ie $u_i(0) = \frac{\Gamma}{n}$ for each socket $i$.
 We then run 10 time steps:
 
 % \begin{minipage}{\columnwidth}
@@ -361,7 +360,7 @@ We then run 10 time steps:
 \PAD
 }
 
-The controller quickly rebalances power caps so that nodes finish their jobs with near-zero tail idle times.
+The controller quickly re-balances power caps so that nodes finish their jobs with near-zero tail idle times.
 
 Some outstanding issues remain to be addressed:
 \begin{itemize}
