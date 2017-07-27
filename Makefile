@@ -9,7 +9,7 @@ FIG-FILES = figures/*.png img/*.tex
 TEX-FILES = *.tex
 BIB-FILES = *.bib
 TOP-LEVEL-ROOT = seec
-CRNAME = Imes.Connor.072717.pdf
+CRNAME = Imes.Connor.072717
 
 all: ${TOP-LEVEL-ROOT}.pdf $(CRNAME)
 
