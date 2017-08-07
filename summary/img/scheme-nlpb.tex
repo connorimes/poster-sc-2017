@@ -1,0 +1,64 @@
+\tikzset{%
+  app/.style    = {draw, thin, rectangle, minimum height = 2em,
+    minimum width = 2em, fill=black!25},
+  block/.style    = {draw, thick, rectangle, minimum height = 2.5em,
+    minimum width = 2.5em},
+  blockres/.style    = {draw, thick, rectangle, minimum height = 2.5em,
+    minimum width = 2.5em, fill=green!25},
+  biblock/.style  = {draw, thick, rectangle, minimum height = 5.5em,
+    minimum width = 6em, fill=red!25},
+  sum/.style      = {draw, circle, node distance = 2cm}, % Adder
+  input/.style    = {coordinate}, % Input
+  output/.style   = {coordinate} % Output
+}
+
+\tikzstyle{vecArrow} = [thick, decoration={markings,mark=at position
+   1 with {\arrow[semithick]{open triangle 60}}},
+   double distance=1.4pt, shorten >= 5.5pt,
+   preaction = {decorate},
+   postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
+\tikzstyle{vecLine} = [thick, double distance=1.4pt, shorten >= 5.5pt]
+\tikzstyle{innerWhite} = [semithick, white,line width=1.4pt, shorten >= 4.5pt]
+
+\begin{tikzpicture}[scale=1.0,transform shape, auto, thick, node distance=1.5cm, >=triangle 45]
+
+\draw
+  % Drawing the top blocks
+  node [input, name=goalaccuracy] {} 
+  node [left of=goalaccuracy, node distance=0.35mm]{}
+  node [sum, right of=goalaccuracy] (sumaccuracy) {} % negative feedback
+  node [block, right of=sumaccuracy, align=center, node distance=2cm] (controlaccuracy) 
+    {~Controller~}
+  % node [block, right of=controlaccuracy, align=center, node distance=3.0cm] (translateaccuracy) 
+  %   {Mapper}
+  % node [blockres, above of=controlaccuracy, align=center, node distance=5cm] (resourcefile) 
+  %   {Initial\\Power Caps}
+;
+  % Connectng lines
+\draw[vecArrow](goalaccuracy) -- node[align=center] {Reference\\Idle Times\\($\vec{0}$)}(sumaccuracy);
+\draw[vecArrow](sumaccuracy) -- node[align=center] {Relative\\Timing\\Error}(controlaccuracy);
+% \draw[->](controlaccuracy) -- node[align=center] {Generic\\Control\\Signal}(translateaccuracy);
+% \draw[vecArrow](resourcefile) -- (controlaccuracy);
+
+% Draw software system
+\draw
+  node [biblock, right of=controlaccuracy, node distance=3cm, align=center, yshift=-0.2cm] (system)
+    {\\System\\\\\\}
+;
+\draw
+  node [app, right of=controlaccuracy, node distance=3cm, align=center, yshift=-0.5cm] (software)
+    {Distributed\\Application}
+;
+
+% lines from translators to software
+\draw[vecArrow](controlaccuracy.east) -- node [name=ka,align=center]{Power\\Caps} (controlaccuracy.east -| system.west);
+
+% Connectng lines
+\coordinate (feedbackup) at ([yshift=-0.6cm]sumaccuracy.south);
+\draw[vecLine](software.west |- feedbackup) -| node [near end,align=center] {\\Measured\\Idle Times} (feedbackup);
+\draw[vecArrow](feedbackup) -- node[pos=0.99] {$-$} (sumaccuracy);
+
+\draw[innerWhite](software.west |- feedbackup) -| node [near end,align=center] {} (feedbackup);
+% \draw[innerWhite](feedbackup) -- node[pos=0.99] {} (sumaccuracy);
+
+\end{tikzpicture}
