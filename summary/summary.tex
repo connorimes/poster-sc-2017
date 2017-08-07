@@ -8,7 +8,7 @@
 %\documentclass[letterpaper,twocolumn,10pt]{article}
 %\usepackage{usenix}
 % \documentclass[conference]{IEEEtran}
-\documentclass[conference]{sig-alternate}
+\documentclass[conference]{sig-alternate-05-2015}
 %\documentclass[pageno]{jpaper}
 \usepackage[normalem]{ulem}
 \usepackage{float}
@@ -141,6 +141,9 @@ tick label style={font=\footnotesize},
 }
 \makeatother
 
+\conferenceinfo{SC '17}{November 12--17, 2017, Denver, CO, USA}
+\doi{01.0001/0000001.0000001}
+
 \newif{\ifanonymous}
 \anonymoustrue
 
@@ -225,7 +228,7 @@ tick label style={font=\footnotesize},
 \numberofauthors{3} 
 \author{
   \alignauthor
-  Connor Imes \thanks{Part of this research was conducted while Connor Imes was a Computing Sciences Summer Student at Lawrence Berkeley National Laboratory.}\\ 
+  Connor Imes \\ %\thanks{Part of this research was conducted while Connor Imes was a Computing Sciences Summer Student at Lawrence Berkeley National Laboratory.}\\ 
   \affaddr{University of Chicago} \\
   \email{ckimes@cs.uchicago.edu}
   \alignauthor
@@ -238,6 +241,8 @@ tick label style={font=\footnotesize},
   \email{hankhoffmann@cs.uchicago.edu}
 }
 
+\setcopyright{acmcopyright}
+
 \maketitle 
 
 % =============================================================================
@@ -246,14 +251,31 @@ tick label style={font=\footnotesize},
 Performance and power management in High Performance Computing (HPC) has historically favored a race-to-idle approach in order to complete applications as quickly as possible, but this is not energy-efficient on modern systems.
 As we move toward exascale and hardware over-provisioning, power management is becoming more critical than ever for HPC system administrators, opening the door for more balanced approaches to performance and power management.
 We propose two projects to address balancing application performance and system power consumption in HPC \emph{during application runtime}, using closed loop feedback designs based on the Self-aware Computing Model to \emph{observe}, \emph{act}, and \emph{decide}.
-
 \end{abstract}
 
-\begin{figure}[t]
-  \includegraphics[width=0.8\columnwidth]{../figures/seec.png}
-  \captionof{figure}{The Self-aware Computing Model.}
-  \label{fig:runtime-ee}
-\end{figure}
+\begin{CCSXML}
+<ccs2012>
+  <concept>
+    <concept_id>10002944.10011123.10011674</concept_id>
+    <concept_desc>General and reference~Performance</concept_desc>
+  <concept_significance>500</concept_significance>
+  </concept>
+  <concept>
+    <concept_id>10002944.10011123.10011124</concept_id>
+    <concept_desc>General and reference~Metrics</concept_desc>
+    <concept_significance>500</concept_significance>
+  </concept>
+</ccs2012>
+\end{CCSXML}
+\ccsdesc[500]{General and reference~Performance}
+\ccsdesc[500]{General and reference~Metrics}
+\printccsdesc
+
+% \begin{figure}[t]
+%   \includegraphics[width=0.8\columnwidth]{../figures/seec.png}
+%   \captionof{figure}{The Self-aware Computing Model.}
+%   \label{fig:runtime-ee}
+% \end{figure}
 
 % =============================================================================
 
@@ -261,10 +283,13 @@ We propose two projects to address balancing application performance and system 
 
 Dynamic voltage and frequency scaling (DVFS) is effective at saving energy by scaling back the processor during I/O or on code that is off the critical path \cite{RountreeAdagio,Jitter}.
 DVFS is available in HPC job schedulers, though unfortunately today it is typically only configurable when a job is launched.
-
 We propose a \interface{Machine Learning-based classifier} to predict the most energy-efficient DVFS frequencies \emph{during runtime} to maximize the work-to-energy ratio of an application running on a single node.
-To train and drive our classifier, we capture low-level \emph{hardware counter metrics}, available through tools like \app{PAPI} and \app{PCM}\cite{PCMGit}.
-\figref{runtime-ee} demonstrates the feedback design.
+To train and drive our classifier, we capture low-level \emph{hardware counter metrics}, available through tools like \app{PAPI} and \app{PCM} \cite{PCMGit}.
+
+Other works have successfully used performance counters to manage performance and power consumption \cite{WuHPCComputer,Chetsa,Libutti2014}, including some that use statistical and machine learning approaches \cite{Sasaki,ShyeIDVFS,Alvarado,Curtis-Maury2008,LiIPDPS2010}.
+However, these works mainly use estimation techniques that require significant modeling and computation.
+By treating the goal of maximizing energy efficiency as a classification problem, we can avoid this pitfall.
+Additionally, we can provide an optimal balance of performance and energy consumption.
 
 \begin{figure}[t]
   \input{img/scheme-ee.tex}
@@ -272,9 +297,13 @@ To train and drive our classifier, we capture low-level \emph{hardware counter m
   \label{fig:runtime-ee}
 \end{figure}
 
+\figref{runtime-ee} demonstrates our machine learning-based feedback design.
 At regular time intervals, the classifier predicts the most energy-efficient frequency to use based on measured application behavior, then applies the setting to the system.
-% At regular time intervals, \eg every second, the classifier makes a new prediction.
-As applications move through \emph{phases}, the controller adapts to the changing application behavior, \eg with the HiPMeraculous genome assembly application as shown in \figref{classifier-hipmer-ee}.
+As applications move through \emph{phases}, the controller adapts to the changing application behavior.
+
+\figref{classifier-hipmer-ee} demonstrates the controller behavior with the HiPMeraculous genome assembly application.
+We trained the classifier from characterizations of HPC applications, like those from the NAS Parallel Benchmarks \cite{NPB}.
+The bold horizontal line in the upper figure is the race-to-idle (nominal DVFS) frequency, and in the lower figure represents the average energy efficiency of the race-to-idle frequency.
 
 \begin{figure}[t]
   \input{img/hipmer-ee.tex}
@@ -290,10 +319,10 @@ In recent years, hardware has been taking more direct control of processor volta
 Fine-grained \emph{power capping} is now the preferred mechanism for managing performance and power tradeoffs, evidenced by the introduction of power capping implementations like Intel Running Average Power Limit (RAPL) \cite{RAPL} and the move from Speed Step to Speed Shift.
 
 Nodes in HPC clusters suffer \emph{non-uniformity} in performance and power consumption due to both manufacturing process variation and imbalance in application workloads.
-We propose a generalized \interface{Multiple Input, Multiple Output (MIMO) Proportional Integral Derivative (PID) controller} to shift power allocations between nodes to eliminate tail idle times in job iterations, thus maximizing application throughput while respecting a global power cap.
+We propose a \interface{Multiple Input, Multiple Output (MIMO) Proportional Integral Derivative (PID) controller} to shift power allocations between nodes to eliminate tail idle times in job iterations, thus maximizing application throughput while respecting a global power cap.
 Unlike heuristic approaches to power management, control theory provides \emph{formal guarantees} of \emph{convergence} as well as \emph{robustness} to application, system, and measurement noise \cite{Hellerstein2004a}.
 These guarantees hold even for applications with different \emph{phases}.
-\figref{runtime-nlpb} demonstrates the feedback control design.
+\figref{runtime-nlpb} demonstrates the control-theoretical design.
 
 \begin{figure}[t]
   \input{img/scheme-nlpb.tex}
@@ -313,31 +342,25 @@ Formally:
 \end{eqnarray}
 % $K_I$ is currently a fixed scalar value decided at initialization time, but we are exploring ways to predict it dynamically at runtime, \eg using a Kalman filter.
 
-We simulate meeting a global power cap of 180 Watts on an artificially imbalanced quad-socket system ($\Gamma=180$, $n=4$) using a MPI+OpenMP application, with each MPI process bound to a socket.
-We begin with evenly distributed power caps, \ie $u_i(0) = \frac{\Gamma}{n}$ for each socket $i$.
-\figref{nlpb-sim} demonstrates the controller behavior over 10 time steps.
-{
-% NLPB_K=2.5 ./nlpb-simulator -n 4 -g 180 -p 40 -P 70 -c /local/nlpb-scripts/boggle/omp-only-balanced-3ghz-rapl.results -i boggle_imbalance.txt -N 10 -l nlpb.log
-% boggle_imbalance:.txt
-% 0.8
-% 0.92
-% 1.10
-% 1.18
+\figref{nlpb-sim} simulates meeting a global power cap of 180 Watts on an artificially imbalanced quad-socket system ($\Gamma=180$, $n=4$) using a MPI+OpenMP application, with each MPI process bound to a socket.
+It begins with evenly distributed power caps, \ie $u_i(0) = \frac{\Gamma}{n}$ for each socket $i$.
+The controller quickly re-balances power caps so that nodes finish their jobs with near-zero tail idle times, thus improving the total application performance.
+
 \begin{figure}[t]
   \input{img/nlpb.tex}
   \captionof{figure}{Simulation of changing node power caps between iterations.}
   \label{fig:nlpb-sim}
 \end{figure}
-The controller quickly re-balances power caps so that nodes finish their jobs with near-zero tail idle times, thus improving the total application performance.
 
 % =============================================================================
 
-\section{Acknowledgements}
+\paragraph*{Acknowledgements}
 The University of
   Chicago's effort on this project is funded by the U.S. Government
   under the DARPA BRASS program, by the Dept. of Energy under DOE
   DE-AC02-06CH11357, by the NSF under CCF 1439156, and by a DOE Early
   Career Award.
+Part of this research was conducted while Connor Imes was a Computing Sciences Summer Student at Lawrence Berkeley National Laboratory.
 
 % =============================================================================
 
