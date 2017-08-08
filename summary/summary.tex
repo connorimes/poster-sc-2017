@@ -270,10 +270,11 @@ We propose two projects to address balancing application performance and system 
 \ccsdesc[500]{General and reference~Performance}
 \ccsdesc[500]{General and reference~Metrics}
 \printccsdesc
+\keywords{Energy Efficiency, Power Management, Runtime Control, Machine Learning, Control Theory}
 
 % \begin{figure}[t]
 %   \includegraphics[width=0.8\columnwidth]{../figures/seec.png}
-%   \captionof{figure}{The Self-aware Computing Model.}
+%   \caption{The Self-aware Computing Model.}
 %   \label{fig:runtime-ee}
 % \end{figure}
 
@@ -293,7 +294,7 @@ Additionally, we can provide an optimal balance of performance and energy consum
 
 \begin{figure}[t]
   \input{img/scheme-ee.tex}
-  \captionof{figure}{Machine Learning Classifier closed loop feedback control.}
+  \caption{Machine Learning Classifier feedback control design.}
   \label{fig:runtime-ee}
 \end{figure}
 
@@ -307,8 +308,9 @@ The bold horizontal line in the upper figure is the race-to-idle (nominal DVFS) 
 
 \begin{figure}[t]
   \input{img/hipmer-ee.tex}
-  \captionof{figure}{Energy-efficient HiPMeraculous (Gradient Boosting classifier).}
+  \caption{Energy-efficient HiPMeraculous using a Gradient Boosting classifier.}
   \label{fig:classifier-hipmer-ee}
+  \vskip -1.8em
 \end{figure}
 
 % =============================================================================
@@ -326,7 +328,7 @@ These guarantees hold even for applications with different \emph{phases}.
 
 \begin{figure}[t]
   \input{img/scheme-nlpb.tex}
-  \captionof{figure}{MIMO PID controller closed loop feedback control.}
+  \caption{MIMO PID controller closed loop feedback control.}
   \label{fig:runtime-nlpb}
 \end{figure}
 
@@ -348,8 +350,9 @@ The controller quickly re-balances power caps so that nodes finish their jobs wi
 
 \begin{figure}[t]
   \input{img/nlpb.tex}
-  \captionof{figure}{Simulation of changing node power caps between iterations.}
+  \caption{Adapting node power caps between iterations.}
   \label{fig:nlpb-sim}
+  \vskip -1.8em
 \end{figure}
 
 % =============================================================================

@@ -16,7 +16,7 @@
         vertical sep=10pt
     },
 height=3cm,
-width=0.88\columnwidth,
+width=0.95\columnwidth,
 xmajorgrids,
 ymajorgrids,
 grid style={dashed},
@@ -28,17 +28,17 @@ tick align = outside,
 tick style={white},
 xticklabel shift={-5pt},
 yticklabel shift={-5pt},
-ylabel shift={-2pt},
+% ylabel shift={-2pt},
 ylabel style={align=center, font=\scriptsize},
 xlabel style={font=\scriptsize},
 unbounded coords=jump,
-legend cell align=left, 
+% legend cell align=left, 
 legend style={ column sep=1ex, font=\scriptsize },
 xticklabel style={font=\scriptsize},
 yticklabel style={font=\scriptsize},
 ]
 
-\nextgroupplot[ylabel={Power Cap (W)}, % Performance
+\nextgroupplot[ylabel={Power Cap \\ (Watts)}, % Performance
 % xlabel={$time$ [iteration]},
 % xlabel near ticks,
 xtick={0,1,2,3,4,5,6,7,8,9,10},
@@ -56,7 +56,7 @@ legend style={draw=none,at={(0.5,1.75)},anchor=north,legend columns=2,line width
 \addplot[thick, solid, color=s4] table[x index=0,y index=21,col sep=space] {img/nlpb.log};
 \addplot[thick, solid, black] coordinates {(0, 45) (10, 45)};
 
-\nextgroupplot[ylabel={Idle Time (S)}, % Performance
+\nextgroupplot[ylabel={Idle Time \\ (Seconds)}, % Performance
 xlabel={$time$ [iteration]},
 xlabel near ticks,
 xtick={0,1,2,3,4,5,6,7,8,9,10},
