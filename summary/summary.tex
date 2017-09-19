@@ -250,7 +250,7 @@ tick label style={font=\footnotesize},
 \begin{abstract}
 Performance and power management in High Performance Computing (HPC) has historically favored a race-to-idle approach in order to complete applications as quickly as possible, but this is not energy-efficient on modern systems.
 As we move toward exascale and hardware over-provisioning, power management is becoming more critical than ever for HPC system administrators, opening the door for more balanced approaches to performance and power management.
-We propose two projects to address balancing application performance and system power consumption in HPC \emph{during application runtime}, using closed loop feedback designs based on the Self-aware Computing Model to \emph{observe}, \emph{act}, and \emph{decide}.
+We propose two projects to address balancing application performance and system power consumption in HPC \emph{during application runtime}, using closed loop feedback designs based on the Self-aware Computing Model to \emph{observe}, \emph{decide}, and \emph{act}.
 \end{abstract}
 
 \begin{CCSXML}
@@ -282,10 +282,8 @@ We propose two projects to address balancing application performance and system 
 
 \section{Machine Learning Classification for Energy Efficiency}
 
-Dynamic voltage and frequency scaling (DVFS) is effective at saving energy by scaling back the processor during I/O or on code that is off the critical path \cite{RountreeAdagio,Jitter}.
-DVFS is available in HPC job schedulers, though unfortunately today it is typically only configurable when a job is launched.
-We propose a \interface{Machine Learning-based classifier} to predict the most energy-efficient DVFS frequencies \emph{during runtime} to maximize the work-to-energy ratio of an application running on a single node.
-To train and drive our classifier, we capture low-level \emph{hardware counter metrics}, available through tools like \app{PAPI} and \app{PCM} \cite{PCMGit}.
+Tuning \textbf{core allocation (taskset)} and \textbf{dynamic voltage and frequency scaling (DVFS)} can save energy by power gating unneeded cores and scaling back active processors, \eg during I/O or for code not on the critical path.
+Both are available in HPC job schedulers, though unfortunately today they are typically only configurable when a job is launched.
 
 Other works have successfully used performance counters to manage performance and power consumption \cite{WuHPCComputer,Chetsa,Libutti2014}, including some that use statistical and machine learning approaches \cite{Sasaki,ShyeIDVFS,Alvarado,Curtis-Maury2008,LiIPDPS2010}.
 However, these works mainly use estimation techniques that require significant modeling and computation.
@@ -298,17 +296,29 @@ Additionally, we can provide an optimal balance of performance and energy consum
   \label{fig:runtime-ee}
 \end{figure}
 
-\figref{runtime-ee} demonstrates our machine learning-based feedback design.
-At regular time intervals, the classifier predicts the most energy-efficient frequency to use based on measured application behavior, then applies the setting to the system.
-As applications move through \emph{phases}, the controller adapts to the changing application behavior.
+We propose using \interface{Machine Learning classifiers} to predict the most energy-efficient combination of taskset and DVFS settings \emph{during runtime} to maximize the work-to-energy ratio of an application running on a single node.
+\figref{runtime-ee} demonstrates the feedback design.
+Low-level \emph{hardware counter metrics}, available through tools like \app{PAPI} and \app{PCM}, train and drive our classifiers.
+At regular time intervals, a classifier predicts the most energy-efficient setting to use based on measured application behavior, then applies the setting to the system.
+As applications move through \emph{phases}, the predictions change accordingly.
 
-\figref{classifier-hipmer-ee} demonstrates the controller behavior with the HiPMeraculous genome assembly application.
-We trained the classifier from characterizations of HPC applications, like those from the NAS Parallel Benchmarks \cite{NPB}.
-The bold horizontal line in the upper figure is the race-to-idle (nominal DVFS) frequency, and in the lower figure represents the average energy efficiency of the race-to-idle frequency.
+We evaluate our approach on a quad-socket (160-logical-core) system with Intel Xeon E7-8870 processors and 512 GB of DRAM using HPC bioinformatic applications, which are often run on such large systems.
+Training data is collected from characterizations of smaller HPC applications like the NAS Parallel Benchmarks, CoMD, HPGMG-FV, LULESH, and STREAM.
+Principal Component Analysis determines which features are most relevant to energy efficiency---DRAM Power, instructions per nominal CPU cycle (EXEC), L2/L3 cache hit/miss rates, and relative frequency excluding sleep time (AFREQ) are among the most useful.
+We evaluate 6 common classifiers -- Gradient Boosting (GB), K-Nearest Neighbors (KNN), Random Forest (RF), Stochastic Gradient Descent (SGD), Support Vector Machine (SVM), and a Linear SVM.
+
+\figref{classifier-hipmer-ee} demonstrates running a Gradient Boosting classifier which uses only 60\% power and saves 20\% energy over the naive race-to-idle approach, with a 33\% increase in runtime.
+% The horizontal bar at 384 Inst/J represents the average energy efficiency of race-to-idle.
+SGD and SVM performed similarly for this application, while KNN, RF, and SVM Linear achieve 55\% power, 10\% energy savings, and 60\% increase in runtime.
+% These values equate to using only 50-60\% power at any given moment compared to race-to-idle.
+
+Now consider hardware over-provisioned environments subject to power constraints, \eg DOE's 20 MW goal for exascale.
+Extrapolating from these results, we could perform nearly \emph{twice as much science} in parallel by better utilizing over-provisioned resources.
+By trading performance for power savings, maximizing energy efficiency \emph{increases the total throughput of a hardware over-provisioned system by up to 50\%.}
 
 \begin{figure}[t]
   \input{img/hipmer-ee.tex}
-  \caption{Energy-efficient HiPMeraculous using a Gradient Boosting classifier.}
+  \caption{HiPMeraculous genome assembly application (Gradient Boosting classifier).}
   \label{fig:classifier-hipmer-ee}
   \vskip -1.8em
 \end{figure}
@@ -323,7 +333,7 @@ Fine-grained \emph{power capping} is now the preferred mechanism for managing pe
 Nodes in HPC clusters suffer \emph{non-uniformity} in performance and power consumption due to both manufacturing process variation and imbalance in application workloads.
 We propose a \interface{Multiple Input, Multiple Output (MIMO) Proportional Integral Derivative (PID) controller} to shift power allocations between nodes to eliminate tail idle times in job iterations, thus maximizing application throughput while respecting a global power cap.
 Unlike heuristic approaches to power management, control theory provides \emph{formal guarantees} of \emph{convergence} as well as \emph{robustness} to application, system, and measurement noise \cite{Hellerstein2004a}.
-These guarantees hold even for applications with different \emph{phases}.
+These guarantees hold even across application \emph{phases}
 \figref{runtime-nlpb} demonstrates the control-theoretical design.
 
 \begin{figure}[t]
