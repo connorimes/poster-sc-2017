@@ -1,0 +1,9 @@
+\section{Conclusion}
+
+Power and energy management is becoming more critical in HPC as we move toward exascale systems.
+We proposed two projects to address balancing performance and power during runtime.
+With over-provisioning, maximizing energy efficiency instead of using a race-to-idle approach allows completing more science in parallel by utilizing extra hardware that is constrained by a global power limit, like DOE's 20 MW goal for exascale.
+Initial results indicate that throughput can be increased by up to 50\%.
+We demonstrated that machine learning classifiers, driven by low-level hardware counters, can be used to predict energy-efficient settings at runtime to reduce both dynamic power and energy consumption.
+We also proposed a MIMO PID controller to dynamically re-balance power allocations in a cluster to reduce tail idle times of parallel applications caused by non-uniformity in hardware and small workload imbalances.
+Simulations indicate that this approach successfully reduces tail idle times and increases total application performance.

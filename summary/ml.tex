@@ -1,0 +1,49 @@
+% \begin{figure}[t]
+%   \includegraphics[width=0.8\columnwidth]{../figures/seec.png}
+%   \caption{The Self-aware Computing Model.}
+%   \label{fig:runtime-ee}
+% \end{figure}
+
+\section{Machine Learning Classification for Energy Efficiency}
+
+Tuning \textbf{core allocation (taskset)} and \textbf{dynamic voltage and frequency scaling (DVFS)} can save power and energy by power gating unneeded cores and scaling back active processors, \eg during I/O or for code not on the critical path.
+Both are available in HPC job schedulers, though unfortunately today they are typically only configurable when a job is launched.
+
+Other works have successfully used performance counters to manage performance and power consumption \cite{WuHPCComputer,Chetsa,Libutti2014}, including some that use statistical and machine learning approaches \cite{Sasaki,ShyeIDVFS,Alvarado,Curtis-Maury2008,LiIPDPS2010}.
+However, these works mainly use estimation techniques that require significant modeling and computation.
+By treating the goal of maximizing energy efficiency as a classification problem, we can avoid this pitfall.
+Additionally, maximizing energy efficiency provides an optimal balance of performance and energy consumption while reducing dynamic power so it can be reallocated elsewhere.
+
+\begin{figure}[t]
+  \input{img/scheme-ee.tex}
+  \caption{Machine Learning Classifier feedback control design.}
+  \label{fig:runtime-ee}
+\end{figure}
+
+We propose using \interface{Machine Learning classifiers} to predict the most energy-efficient combination of taskset and DVFS settings \emph{during runtime} to maximize the work-to-energy ratio of an application running on a single node.
+\figref{runtime-ee} demonstrates the feedback design.
+Low-level \emph{hardware counter metrics}, available through tools like \app{PAPI} and \app{PCM}, train and drive our classifiers.
+At regular time intervals, a classifier predicts the most energy-efficient setting to use based on measured application behavior, then applies the setting to the system.
+As applications move through \emph{phases}, the predictions change accordingly.
+
+We evaluate our approach on a quad-socket (160-logical-core) system with Intel Xeon E7-8870 processors and 512 GB of DRAM using HPC bioinformatic applications, which are often run on such large systems.
+Naturally, it is important to demonstrate results on a single node before scaling to multiple nodes.
+Training data is collected from characterizations of smaller HPC applications like the NAS Parallel Benchmarks, CoMD, HPGMG-FV, LULESH, and STREAM.
+Principal Component Analysis determines which features are most relevant to energy efficiency---DRAM power, instructions per nominal CPU cycle (EXEC), L2/L3 cache hit/miss rates, and relative frequency excluding sleep time (AFREQ) are among the most useful.
+We evaluate 6 common classifiers -- Gradient Boosting (GB), K-Nearest Neighbors (KNN), Random Forest (RF), Stochastic Gradient Descent (SGD), Support Vector Machine (SVM), and a Linear SVM.
+
+\begin{figure}[t]
+  \input{img/hipmer-ee.tex}
+  \caption{HiPMeraculous genome assembly application (Gradient Boosting classifier).}
+  \label{fig:classifier-hipmer-ee}
+  \vskip -1.8em
+\end{figure}
+
+\figref{classifier-hipmer-ee} demonstrates running a Gradient Boosting classifier which uses only 60\% power and saves 20\% energy over the naive race-to-idle approach, with a 33\% increase in runtime.
+% The horizontal bar at 384 Inst/J represents the average energy efficiency of race-to-idle.
+SGD and SVM performed similarly for this application, while KNN, RF, and SVM Linear achieve 55\% power, 10\% energy savings, and 60\% increase in runtime.
+% These values equate to using only 50-60\% power at any given moment compared to race-to-idle.
+
+Now consider hardware over-provisioned environments subject to power constraints, \eg DOE's 20 MW goal for exascale \cite{Exascale20MW}. %\cite{Exascale20MW, EOSR2012}.
+Extrapolating from these results, we could perform nearly \emph{twice as much science} in parallel by better utilizing over-provisioned resources.
+By trading performance for power savings, maximizing energy efficiency \emph{increases the total throughput of a hardware over-provisioned system by up to 50\%.}

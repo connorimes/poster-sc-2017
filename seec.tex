@@ -273,7 +273,7 @@ As applications move through \emph{phases}, the predictions change accordingly.
 
 We evaluate our approach on a quad-socket (160-logical-core) system with Intel Xeon E7-8870 processors and 512 GB of DRAM using HPC bioinformatic applications, which are often run on such large systems.
 Training data is collected from characterizations of smaller HPC applications like the NAS Parallel Benchmarks, CoMD, HPGMG-FV, LULESH, and STREAM.
-Principal Component Analysis determines which features are most relevant to energy efficiency---DRAM Power, instructions per nominal CPU cycle (EXEC), L2/L3 cache hit/miss rates, and relative frequency excluding sleep time (AFREQ) are among the most useful.
+Principal Component Analysis determines which features are most relevant to energy efficiency---DRAM power, instructions per nominal CPU cycle (EXEC), L2/L3 cache hit/miss rates, and relative frequency excluding sleep time (AFREQ) are among the most useful.
 We evaluate 6 common classifiers -- Gradient Boosting (GB), K-Nearest Neighbors (KNN), Random Forest (RF), Stochastic Gradient Descent (SGD), Support Vector Machine (SVM), and a Linear SVM.
 
 {
@@ -340,8 +340,8 @@ Formally:
 \end{eqnarray}
 % $K_I$ is currently a fixed scalar value decided at initialization time, but we are exploring ways to predict it dynamically at runtime, \eg using a Kalman filter.
 
-We simulate meeting a global power cap of 180 Watts on an artificially imbalanced quad-socket system ($\Gamma=180$, $n=4$) using a MPI+OpenMP application, with each MPI process bound to a socket.
-We begin with evenly distributed power caps, \ie $u_i(0) = \frac{\Gamma}{n}$ for each socket $i$.
+\figref{nlpb-sim} simulates meeting a global power cap of 180 Watts on a theoretically imbalanced 4-node cluster ($\Gamma=180$, $n=4$) using a MPI+OpenMP application.
+It begins with evenly distributed power caps, \ie $u_i(0) = \frac{\Gamma}{n}$ for each node $i$.
 We then run 10 time steps:
 
 % \begin{minipage}{\columnwidth}

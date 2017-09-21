@@ -1,0 +1,39 @@
+\section{MIMO Controller for Power Balancing}
+
+In recent years, hardware has been taking more direct control of processor voltage and frequency, making fine-tuned software-management of DVFS obsolete.
+Fine-grained \emph{power capping} is now the preferred mechanism for managing performance and power tradeoffs, evidenced by the introduction of power capping implementations like Intel Running Average Power Limit (RAPL) \cite{RAPL} and the move from Speed Step to Speed Shift.
+
+Nodes in HPC clusters suffer \emph{non-uniformity} in performance and power consumption due to both manufacturing process variation and imbalance in application workloads.
+We propose a \interface{Multiple Input, Multiple Output (MIMO) Proportional Integral Derivative (PID) controller} to shift power allocations between nodes to eliminate tail idle times in job iterations, thus maximizing application throughput while respecting a global power cap.
+Unlike heuristic approaches to power management, control theory provides \emph{formal guarantees} of \emph{convergence} as well as \emph{robustness} to application, system, and measurement noise \cite{Hellerstein2004a}.
+These guarantees hold even across application \emph{phases}.
+\figref{runtime-nlpb} demonstrates the control-theoretical design.
+
+\begin{figure}[t]
+  \input{img/scheme-nlpb.tex}
+  \caption{MIMO PID controller closed loop feedback control.}
+  \label{fig:runtime-nlpb}
+\end{figure}
+
+Given a cluster with $n$ nodes and global power cap $\Gamma$, the PID controller computes a new power signal vector $\vec{u}$ of size $n$ in each iteration $t$:
+\begin{eqnarray}
+\vec{u}(t) = \vec{u}(t-1) + K_I \cdot \vec{e}(t)
+\end{eqnarray}
+$K_I$ is the ratio of control change and $\vec{e}(t)$ are the node idle times, divided by their mean and normalized around $0$.
+This formulation ensures that the entire global power cap is re-allocated in each iteration.
+Formally:
+\begin{eqnarray}
+\sum_{i=1}^{n} e_i(t) = 0 \implies \sum_{i=1}^{n} u_i(t) = \sum_{i=1}^{n} u_i(t-1) = \Gamma
+\end{eqnarray}
+% $K_I$ is currently a fixed scalar value decided at initialization time, but we are exploring ways to predict it dynamically at runtime, \eg using a Kalman filter.
+
+\figref{nlpb-sim} simulates meeting a global power cap of 180 Watts on a theoretically imbalanced 4-node cluster ($\Gamma=180$, $n=4$) using a MPI+OpenMP application.
+It begins with evenly distributed power caps, \ie $u_i(0) = \frac{\Gamma}{n}$ for each node $i$.
+The controller quickly re-balances power caps so that nodes finish their jobs with near-zero tail idle times, thus improving the total application performance.
+
+\begin{figure}[t]
+  \input{img/nlpb.tex}
+  \caption{Adapting node power caps between iterations.}
+  \label{fig:nlpb-sim}
+  \vskip -1.8em
+\end{figure}
